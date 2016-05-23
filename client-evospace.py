@@ -1,3 +1,5 @@
+# Cliente de evospace-rpc en Python
+
 import barrister
 import json
 import random
@@ -40,7 +42,7 @@ def evolveSample(sample):
 	return {'sample_id': sample_id, 'sample': new_individuals}
 
 
-
+# Conexion
 trans  = barrister.HttpTransport("http://localhost:1818/")
 client = barrister.Client(trans)
 
