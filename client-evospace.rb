@@ -1,3 +1,5 @@
+# Cliente de evospace-rpc en Python
+
 require 'barrister'
 require 'json'
 
@@ -42,9 +44,11 @@ def evolveSample(sample)
 	return {sample_id: sample_id, sample: new_individuals}
 end
 
+# Conexion
 trans = Barrister::HttpTransport.new("http://localhost:1818/")
 client = Barrister::Client.new(trans)
 
+# Parametros
 namePop = "BLEA18"
 
 # Crear, Inicializar y Preparar la Poblracion
