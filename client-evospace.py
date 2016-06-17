@@ -1,12 +1,11 @@
-# Cliente de evospace-rpc en Python
+# Client for evospace-js
+# Example in python
+# Programmer : Luis Rodriguez
+# Author: Luis Rodriguez
 
 import barrister
 import json
 import random
-
-def toDictionary(cadena):
-	json_acceptable_string = cadena.replace("'", "\"")
-	return json.loads(json_acceptable_string)
 
 def getRandomInt(vmin, vmax):
 	return random.randint(vmin, vmax)
@@ -32,7 +31,7 @@ def evolveSample(sample):
 	
 	for i in range(0, noIndividuals):
 		chromosome = []
-		onlyIndividual = toDictionary(sample['sample'][i])
+		onlyIndividual = sample['sample'][i]
 
 		for j in range(0, len(onlyIndividual['chromosome'])):
 			chromosome.append(onlyIndividual['chromosome'][j] + 100)
@@ -41,20 +40,21 @@ def evolveSample(sample):
 
 	return {'sample_id': sample_id, 'sample': new_individuals}
 
-
-# Conexion
+# Conexion con el Server
 trans  = barrister.HttpTransport("http://localhost:1818/")
 client = barrister.Client(trans)
 
+
 # Parametros
-namePop = "BLEA18"
+namePop = "popTest"
 
 # Crear, Inicializar y Preparar la Poblracion
 result = client.namePopulations.createPopulation(namePop)
 print result
 
+
 # Insertar la Poblacion Inicial
-putSample = createPopulation(18)
+putSample = createPopulation(50)
 putSample = json.dumps(putSample)
 PutSample = client.Population.put_sample(namePop, putSample)
 print PutSample
@@ -63,25 +63,23 @@ print PutSample
 keys = client.Population.read_pop_keys(namePop)
 print keys
 
-
 # Leer una muestra de la poblacion
 read = client.Population.read(namePop, 2)
-read = toDictionary(read)
+read = json.loads(read)
 print read
 
 
 # Obtener una muestra
-getSample = client.Population.get_sample(namePop,2)
-getSample = toDictionary(getSample)
-print
-print getSample
-print
+getSample = client.Population.get_sample(namePop,10)
+getSample = json.loads(getSample)
+print type(getSample),getSample['sample'][0]
 
 
 # Evolucionar muestra
 evolveSample = evolveSample(getSample)
+evolveSample = json.dumps(evolveSample)
 print evolveSample
 
-# Respawn muestra
-respawn = client.Population.respawn_sample(namePop, evolveSample['sample_id'])
-print respawn
+# Regresar la muestra evolucionada
+PutSample = client.Population.put_sample(namePop, evolveSample)
+print PutSample

@@ -1,4 +1,7 @@
-# Cliente de evospace-rpc en Python
+# Client for evospace-js
+# Example in ruby
+# Programmer : Luis Rodriguez
+# Author: Luis Rodriguez
 
 require 'barrister'
 require 'json'
@@ -32,7 +35,7 @@ def evolveSample(sample)
 
 	for i in 0..noIndividuals
 		chromosome = Array.new
-		onlyIndividual = JSON.parse(sample["sample"][i])
+		onlyIndividual = sample["sample"][i]
 
 		for j in 0..onlyIndividual["chromosome"].length-1
 			chromosome.push(onlyIndividual["chromosome"][j] + 100)
@@ -44,19 +47,19 @@ def evolveSample(sample)
 	return {sample_id: sample_id, sample: new_individuals}
 end
 
-# Conexion
+# Conexion con el Server
 trans = Barrister::HttpTransport.new("http://localhost:1818/")
 client = Barrister::Client.new(trans)
 
 # Parametros
-namePop = "BLEA18"
+namePop = "popTest"
 
 # Crear, Inicializar y Preparar la Poblracion
 result = client.namePopulations.createPopulation(namePop)
 puts result
 
 # Insertar la Poblacion Inicial
-putSample = createPopulation(20)
+putSample = createPopulation(50)
 putSample = putSample.to_json
 PutSample = client.Population.put_sample(namePop, putSample)
 puts PutSample
@@ -71,17 +74,15 @@ read = JSON.parse(read)
 puts read
 
 # Obtener una muestra
-getSample = client.Population.get_sample(namePop,5)
+getSample = client.Population.get_sample(namePop,10)
 getSample = JSON.parse(getSample)
-puts
 puts getSample
-puts
 
 # Evolucionar muestra
 evolveSample = evolveSample(getSample)
+evolveSample = evolveSample.to_json
 puts evolveSample
 
-#Respawn muestra
-respawn = client.Population.respawn_sample(namePop, evolveSample[:sample_id])
-puts respawn
-
+# Regresar la muestra evolucionada
+putSample = client.Population.put_sample(namePop, evolveSample)
+print putSample
